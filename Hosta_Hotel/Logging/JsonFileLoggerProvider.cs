@@ -8,6 +8,10 @@ public class JsonFileLoggerProvider : ILoggerProvider
 
     public JsonFileLoggerProvider(string path)
     {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            throw new Exception("Pathul nu poate fi gol.");
+        }
         _path = path;
     }
 
@@ -15,6 +19,7 @@ public class JsonFileLoggerProvider : ILoggerProvider
     {
         return new JsonFileLogger(_path);
     }
-
+    // Fisierele de inchid automat dupa scriere / suprascriere
+    // Nu e nevoie de dispose
     public void Dispose() { }
 }

@@ -47,9 +47,22 @@ public class PersistenceManager
             var data = JsonSerializer.Deserialize<HotelDataWrapper>(jsonString);
             return data ?? new HotelDataWrapper();
         }
-        catch
+        catch (Exception ex)
         {
-            // Dacă fișierul este corupt, returnăm un obiect gol pentru a nu bloca aplicația
+            // Daca baza de date e corupta, facem backup
+            try
+            {
+                string backupPath = $"{FilePath}.backup_corrupt_{DateTime.Now.Ticks}.bak";
+                File.Copy(FilePath, backupPath, true);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"ATENTIE!!! Baza de date este corupta. Backup salvat: {backupPath}");
+                Console.ResetColor();
+            }
+            catch 
+            {
+                // In caz ca nu reuseste sa faca backup, ignoram ca sa nu crape aplicatia
+            }
+            
             return new HotelDataWrapper();
         }
     }
